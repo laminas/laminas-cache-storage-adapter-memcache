@@ -1,14 +1,14 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-cache for the canonical source repository
- * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-cache/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZendTest\Cache\Psr\SimpleCache;
+namespace ZendTest\Cache\Psr\CacheItemPool;
 
-use Cache\IntegrationTests\SimpleCacheTest;
-use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
+use Cache\IntegrationTests\CachePoolTest;
+use Zend\Cache\Psr\CacheItemPool\CacheItemPoolAdapter;
 use Zend\Cache\Storage\Adapter\Memcache;
 use Zend\Cache\StorageFactory;
 use Zend\Cache\Exception;
@@ -17,7 +17,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 /**
  * @require extension memcache
  */
-class MemcacheIntegrationTest extends SimpleCacheTest
+class MemcacheIntegrationTest extends CachePoolTest
 {
     /**
      * Backup default timezone
@@ -54,7 +54,7 @@ class MemcacheIntegrationTest extends SimpleCacheTest
         parent::tearDown();
     }
 
-    public function createSimpleCache()
+    public function createCachePool()
     {
         $host = getenv('TESTS_ZEND_CACHE_MEMCACHE_HOST');
         $port = getenv('TESTS_ZEND_CACHE_MEMCACHE_PORT');
@@ -70,7 +70,14 @@ class MemcacheIntegrationTest extends SimpleCacheTest
 
         try {
             $storage = StorageFactory::adapterFactory('memcache', $options);
-            return new SimpleCacheDecorator($storage);
+
+            $deferredSkippedMessage = sprintf(
+                '%s storage doesn\'t support driver deferred',
+                \get_class($storage)
+            );
+            $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
+
+            return new CacheItemPoolAdapter($storage);
         } catch (Exception\ExtensionNotLoadedException $e) {
             $this->markTestSkipped($e->getMessage());
         } catch (ServiceNotCreatedException $e) {
