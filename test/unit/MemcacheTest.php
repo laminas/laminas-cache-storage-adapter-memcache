@@ -18,10 +18,6 @@ class MemcacheTest extends CommonAdapterTest
 {
     public function setUp()
     {
-        if (getenv('TESTS_LAMINAS_CACHE_MEMCACHE_ENABLED') != 'true') {
-            $this->markTestSkipped('Enable TESTS_LAMINAS_CACHE_MEMCACHE_ENABLED to run this test');
-        }
-
         if (version_compare('2.0.0', phpversion('memcache')) > 0) {
             try {
                 new Cache\Storage\Adapter\Memcache();
