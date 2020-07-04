@@ -12,6 +12,7 @@ env:
     - COMPOSER_ARGS="--no-interaction"
     - COVERAGE_DEPS="php-coveralls/php-coveralls"
     - SERIALIZER_DEPS="laminas/laminas-serializer"
+    - MEMCACHE_PECL_CFLAGS=""
 
 matrix:
   fast_finish: true
@@ -20,10 +21,12 @@ matrix:
       env:
         - DEPS=lowest
         - MEMCACHE_PECL_VERSION="memcache-3.0.8"
+        - MEMCACHE_PECL_CFLAGS="-fgnu89-inline"
     - php: 5.6
       env:
         - DEPS=latest
         - MEMCACHE_PECL_VERSION="memcache-3.0.8"
+        - MEMCACHE_PECL_CFLAGS="-fgnu89-inline"
     - php: 7.0
       env:
         - DEPS=lowest
@@ -71,7 +74,7 @@ before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
 
 install:
-  - yes|CFLAGS="-fgnu89-inline" pecl install -f $MEMCACHE_PECL_VERSION
+  - yes|CFLAGS="$MEMCACHE_PECL_CFLAGS" pecl install -f $MEMCACHE_PECL_VERSION
   - travis_retry composer install $COMPOSER_ARGS
   - travis_retry composer require --dev $COMPOSER_ARGS $SERIALIZER_DEPS
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
