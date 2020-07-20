@@ -18,6 +18,9 @@
         "laminas/laminas-coding-standard": "~1.0.0",
         "squizlabs/php_codesniffer": "^2.7"
     },
+    "suggest": {
+        "ext-memcache": "Memcache >= 2.0.0 to use the Memcache storage adapter"
+    },
     "config": {
         "sort-packages": true
     },
