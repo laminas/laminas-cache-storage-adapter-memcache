@@ -18,15 +18,6 @@ class MemcacheTest extends CommonAdapterTest
 {
     public function setUp()
     {
-        if (version_compare('2.0.0', phpversion('memcache')) > 0) {
-            try {
-                new Cache\Storage\Adapter\Memcache();
-                $this->fail("Expected exception Laminas\Cache\Exception\ExtensionNotLoadedException");
-            } catch (Cache\Exception\ExtensionNotLoadedException $e) {
-                $this->markTestSkipped("Missing ext/memcache version >= 2.0.0");
-            }
-        }
-
         $this->_options  = new Cache\Storage\Adapter\MemcacheOptions([
             'resource_id' => __CLASS__
         ]);
