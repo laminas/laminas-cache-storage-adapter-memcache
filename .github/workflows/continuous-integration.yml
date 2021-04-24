@@ -35,3 +35,5 @@ jobs:
         uses: laminas/laminas-continuous-integration-action@v1
         with:
           job: ${{ matrix.job }}
+        env:
+          TESTS_LAMINAS_CACHE_MEMCACHE_HOST: "memcached"
