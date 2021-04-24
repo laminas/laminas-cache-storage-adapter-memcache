@@ -66,17 +66,8 @@ class MemcacheIntegrationTest extends SimpleCacheTest
             $options['servers'] = [[$host]];
         }
 
-        try {
-            $storage = StorageFactory::adapterFactory('memcache', $options);
-            $storage->addPlugin(new Serializer());
-            return new SimpleCacheDecorator($storage);
-        } catch (Exception\ExtensionNotLoadedException $e) {
-            $this->markTestSkipped($e->getMessage());
-        } catch (ServiceNotCreatedException $e) {
-            if ($e->getPrevious() instanceof Exception\ExtensionNotLoadedException) {
-                $this->markTestSkipped($e->getMessage());
-            }
-            throw $e;
-        }
+        $storage = StorageFactory::adapterFactory('memcache', $options);
+        $storage->addPlugin(new Serializer());
+        return new SimpleCacheDecorator($storage);
     }
 }
