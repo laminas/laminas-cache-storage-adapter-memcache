@@ -22,11 +22,15 @@ jobs:
     name: QA Checks
     needs: [matrix]
     runs-on: ${{ matrix.operatingSystem }}
+    services:
+      memcached:
+        image: memcached:1.6-alpine
+        ports:
+          - 11211:11211
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
     steps:
-      - uses: niden/actions-memcached@v7
       - name: ${{ matrix.name }}
         uses: laminas/laminas-continuous-integration-action@v1
         with:
