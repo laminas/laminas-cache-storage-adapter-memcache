@@ -10,7 +10,6 @@ namespace LaminasTest\Cache\Psr\SimpleCache;
 
 use Cache\IntegrationTests\SimpleCacheTest;
 use Laminas\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Laminas\Cache\Storage\Adapter\Memcache;
 use Laminas\Cache\Storage\Plugin\Serializer;
 use Laminas\Cache\StorageFactory;
 
@@ -30,9 +29,6 @@ class MemcacheIntegrationTest extends SimpleCacheTest
      */
     private $tz;
 
-    /** @var Memcache */
-    private $storage;
-
     protected function setUp(): void
     {
         // set non-UTC timezone
@@ -45,10 +41,6 @@ class MemcacheIntegrationTest extends SimpleCacheTest
     protected function tearDown(): void
     {
         date_default_timezone_set($this->tz);
-
-        if ($this->storage) {
-            $this->storage->flush();
-        }
 
         parent::tearDown();
     }
@@ -66,6 +58,8 @@ class MemcacheIntegrationTest extends SimpleCacheTest
         } elseif ($host) {
             $options['servers'] = [[$host]];
         }
+
+        $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
 
         $storage = StorageFactory::adapterFactory('memcache', $options);
         $storage->addPlugin(new Serializer());

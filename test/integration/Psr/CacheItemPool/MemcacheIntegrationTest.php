@@ -10,8 +10,6 @@ namespace LaminasTest\Cache\Psr\CacheItemPool;
 
 use Cache\IntegrationTests\CachePoolTest;
 use Laminas\Cache\Psr\CacheItemPool\CacheItemPoolDecorator;
-use Laminas\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Laminas\Cache\Storage\Adapter\Memcache;
 use Laminas\Cache\Storage\Plugin\Serializer;
 use Laminas\Cache\StorageFactory;
 
@@ -33,9 +31,6 @@ class MemcacheIntegrationTest extends CachePoolTest
      */
     private $tz;
 
-    /** @var Memcache */
-    private $storage;
-
     protected function setUp(): void
     {
         // set non-UTC timezone
@@ -49,14 +44,10 @@ class MemcacheIntegrationTest extends CachePoolTest
     {
         date_default_timezone_set($this->tz);
 
-        if ($this->storage) {
-            $this->storage->flush();
-        }
-
         parent::tearDown();
     }
 
-    public function createCachePool(): SimpleCacheDecorator
+    public function createCachePool(): CacheItemPoolDecorator
     {
         $host = getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST');
         $port = getenv('TESTS_LAMINAS_CACHE_MEMCACHE_PORT');
