@@ -10,36 +10,38 @@ namespace LaminasTest\Cache\Storage\Adapter;
 
 use Laminas\Cache;
 
+use function getenv;
+
 /**
  * @group      Laminas_Cache
  * @covers Laminas\Cache\Storage\Adapter\Memcache<extended>
  */
-class MemcacheTest extends CommonAdapterTest
+class MemcacheTest extends AbstractCommonAdapterTest
 {
-    public function setUp()
+    public function setUp(): void
     {
-        $this->_options  = new Cache\Storage\Adapter\MemcacheOptions([
-            'resource_id' => __CLASS__
+        $this->options = new Cache\Storage\Adapter\MemcacheOptions([
+            'resource_id' => self::class,
         ]);
 
         if (getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST') && getenv('TESTS_LAMINAS_CACHE_MEMCACHE_PORT')) {
-            $this->_options->getResourceManager()->addServers(__CLASS__, [
-                [getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST'), getenv('TESTS_LAMINAS_CACHE_MEMCACHE_PORT')]
+            $this->options->getResourceManager()->addServers(self::class, [
+                [getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST'), getenv('TESTS_LAMINAS_CACHE_MEMCACHE_PORT')],
             ]);
         } elseif (getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST')) {
-            $this->_options->getResourceManager()->addServers(__CLASS__, [
-                [getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST')]
+            $this->options->getResourceManager()->addServers(self::class, [
+                [getenv('TESTS_LAMINAS_CACHE_MEMCACHE_HOST')],
             ]);
         }
 
-        $this->_storage = new Cache\Storage\Adapter\Memcache();
-        $this->_storage->setOptions($this->_options);
-        $this->_storage->flush();
+        $this->storage = new Cache\Storage\Adapter\Memcache();
+        $this->storage->setOptions($this->options);
+        $this->storage->flush();
 
         parent::setUp();
     }
 
-    public function getCommonAdapterNamesProvider()
+    public function getCommonAdapterNamesProvider(): array
     {
         return [
             ['memcache'],
@@ -119,7 +121,7 @@ class MemcacheTest extends CommonAdapterTest
 
     public function testCompressThresholdOptions()
     {
-        $threshold = 100;
+        $threshold  = 100;
         $minSavings = 0.2;
 
         $options = new Cache\Storage\Adapter\MemcacheOptions();
@@ -139,10 +141,10 @@ class MemcacheTest extends CommonAdapterTest
         $this->assertEquals($memcache->getOptions()->getAutoCompressMinSavings(), $minSavings);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
-        if ($this->_storage) {
-            $this->_storage->flush();
+        if ($this->storage) {
+            $this->storage->flush();
         }
 
         parent::tearDown();

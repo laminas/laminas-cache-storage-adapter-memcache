@@ -8,6 +8,7 @@
 
 namespace LaminasTest\Cache\Storage\Adapter;
 
+use Laminas\Cache\Exception\RuntimeException;
 use Laminas\Cache\Storage\Adapter\MemcacheResourceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +29,7 @@ class MemcacheResourceManagerTest extends TestCase
      */
     protected $resourceManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resourceManager = new MemcacheResourceManager();
     }
@@ -47,7 +48,7 @@ class MemcacheResourceManagerTest extends TestCase
      */
     public function validResourceProvider()
     {
-        $data = [
+        return [
             // empty resource
             [
                 'testEmptyResource',
@@ -59,16 +60,23 @@ class MemcacheResourceManagerTest extends TestCase
             [
                 'testServersGivenAsString',
                 [
-                    'servers' => '127.0.0.1:1234,127.0.0.1,192.1.0.1?weight=3,localhost,127.0.0.1:11211?weight=1' .
-                                 ',10.0.0.1:11211?weight=1&status=0&persistent=0&timeout=5&retry_interval=10',
+                    'servers' => '127.0.0.1:1234,127.0.0.1,192.1.0.1?weight=3,localhost,127.0.0.1:11211?weight=1'
+                                 . ',10.0.0.1:11211?weight=1&status=0&persistent=0&timeout=5&retry_interval=10',
                 ],
                 [
                     ['host' => '127.0.0.1', 'port' => 1234,  'status' => true],
                     ['host' => '127.0.0.1', 'port' => 11211, 'weight' => 1, 'status' => true],
                     ['host' => '192.1.0.1', 'port' => 11211, 'weight' => 3, 'status' => true],
                     ['host' => 'localhost', 'port' => 11211, 'status' => true],
-                    ['host' => '10.0.0.1',  'port' => 11211, 'weight' => 1, 'status' => false,
-                          'persistent' => false, 'timeout' => 5,  'retry_interval' => 10],
+                    [
+                        'host'           => '10.0.0.1',
+                        'port'           => 11211,
+                        'weight'         => 1,
+                        'status'         => false,
+                        'persistent'     => false,
+                        'timeout'        => 5,
+                        'retry_interval' => 10,
+                    ],
                 ],
             ],
 
@@ -90,8 +98,15 @@ class MemcacheResourceManagerTest extends TestCase
                     ['host' => '127.0.0.1', 'port' => 11211, 'weight' => 1, 'status' => true],
                     ['host' => '192.1.0.1', 'port' => 11211, 'weight' => 3, 'status' => true],
                     ['host' => 'localhost', 'port' => 11211, 'status' => true],
-                    ['host' => '10.0.0.1',  'port' => 11211, 'weight' => 1, 'status' => false,
-                          'persistent' => false, 'timeout' => 5,  'retry_interval' => 10],
+                    [
+                        'host'           => '10.0.0.1',
+                        'port'           => 11211,
+                        'weight'         => 1,
+                        'status'         => false,
+                        'persistent'     => false,
+                        'timeout'        => 5,
+                        'retry_interval' => 10,
+                    ],
                 ],
             ],
 
@@ -113,8 +128,15 @@ class MemcacheResourceManagerTest extends TestCase
                     ['host' => '127.0.0.1', 'port' => 11211, 'weight' => 1, 'status' => true],
                     ['host' => '192.1.0.1', 'port' => 11211, 'weight' => 3, 'status' => true],
                     ['host' => 'localhost', 'port' => 11211, 'status' => true],
-                    ['host' => '10.0.0.1',  'port' => 11211, 'weight' => 1, 'status' => false,
-                          'persistent' => false, 'timeout' => 5,  'retry_interval' => 10],
+                    [
+                        'host'           => '10.0.0.1',
+                        'port'           => 11211,
+                        'weight'         => 1,
+                        'status'         => false,
+                        'persistent'     => false,
+                        'timeout'        => 5,
+                        'retry_interval' => 10,
+                    ],
                 ],
             ],
 
@@ -124,11 +146,11 @@ class MemcacheResourceManagerTest extends TestCase
                 [
                     'servers' => [
                         [
-                           'host' => '127.0.0.1',
-                           'port' => 1234,
+                            'host' => '127.0.0.1',
+                            'port' => 1234,
                         ],
                         [
-                           'host' => '127.0.0.1',
+                            'host' => '127.0.0.1',
                         ],
                         [
                             'host'   => '192.1.0.1',
@@ -138,19 +160,19 @@ class MemcacheResourceManagerTest extends TestCase
                             'host' => 'localhost',
                         ],
                         [
-                            'host' => '127.0.0.1',
-                            'port' => 11211,
+                            'host'   => '127.0.0.1',
+                            'port'   => 11211,
                             'weight' => 1,
                         ],
                         [
-                            'host' => '10.0.0.1',
-                            'port' => 11211,
-                            'weight' => 1,
-                            'status' => false,
-                            'persistent' => false,
-                            'timeout' => 5,
-                            'retry_interval' => 10
-                        ]
+                            'host'           => '10.0.0.1',
+                            'port'           => 11211,
+                            'weight'         => 1,
+                            'status'         => false,
+                            'persistent'     => false,
+                            'timeout'        => 5,
+                            'retry_interval' => 10,
+                        ],
                     ],
                 ],
                 [
@@ -158,13 +180,18 @@ class MemcacheResourceManagerTest extends TestCase
                     ['host' => '127.0.0.1', 'port' => 11211, 'weight' => 1, 'status' => true],
                     ['host' => '192.1.0.1', 'port' => 11211, 'weight' => 3, 'status' => true],
                     ['host' => 'localhost', 'port' => 11211, 'status' => true],
-                    ['host' => '10.0.0.1',  'port' => 11211, 'weight' => 1, 'status' => false,
-                          'persistent' => false, 'timeout' => 5,  'retry_interval' => 10],
+                    [
+                        'host'           => '10.0.0.1',
+                        'port'           => 11211,
+                        'weight'         => 1,
+                        'status'         => false,
+                        'persistent'     => false,
+                        'timeout'        => 5,
+                        'retry_interval' => 10,
+                    ],
                 ],
             ],
         ];
-
-        return $data;
     }
 
     /**
@@ -172,7 +199,6 @@ class MemcacheResourceManagerTest extends TestCase
      * @param string $resourceId
      * @param mixed  $resource
      * @param array  $expectedServers
-     * @param array  $expectedLibOptions
      */
     public function testValidResources($resourceId, $resource, $expectedServers)
     {
@@ -199,36 +225,36 @@ class MemcacheResourceManagerTest extends TestCase
      */
     public function validCompressThresholdOptionsProvider()
     {
-        $data = [
+        return [
             [
                 'testThresholdResource',
                 [
                     'auto_compress_threshold' => 100,
                 ],
                 [
-                    'auto_compress_threshold' => 100,
+                    'auto_compress_threshold'   => 100,
                     'auto_compress_min_savings' => null,
                 ],
             ],
             [
                 'testThresholdAndMinSavingsResource',
                 [
-                    'auto_compress_threshold' => 100,
+                    'auto_compress_threshold'   => 100,
                     'auto_compress_min_savings' => 0.2,
                 ],
                 [
-                    'auto_compress_threshold' => 100,
+                    'auto_compress_threshold'   => 100,
                     'auto_compress_min_savings' => 0.2,
                 ],
             ],
             [
                 'testStringThresholdAndMinSavingsResource',
                 [
-                    'auto_compress_threshold' => "100",
+                    'auto_compress_threshold'   => "100",
                     'auto_compress_min_savings' => "0.2",
                 ],
                 [
-                    'auto_compress_threshold' => 100,
+                    'auto_compress_threshold'   => 100,
                     'auto_compress_min_savings' => 0.2,
                 ],
             ],
@@ -236,17 +262,16 @@ class MemcacheResourceManagerTest extends TestCase
                 'testThresholdArrayResource',
                 [
                     'auto_compress_threshold' => [
-                        'threshold' => 100,
+                        'threshold'   => 100,
                         'min_savings' => 0.2,
                     ],
                 ],
                 [
-                    'auto_compress_threshold' => 100,
+                    'auto_compress_threshold'   => 100,
                     'auto_compress_min_savings' => 0.2,
                 ],
             ],
         ];
-        return $data;
     }
 
     /**
@@ -272,7 +297,8 @@ class MemcacheResourceManagerTest extends TestCase
         $resourceMock = $this->getMockBuilder('Memcache')
             ->setMethods(['setCompressThreshold'])
             ->getMock();
-        if (isset($thresholdOptions['auto_compress_min_savings'])
+        if (
+            isset($thresholdOptions['auto_compress_min_savings'])
             && $thresholdOptions['auto_compress_min_savings'] !== null
         ) {
             $resourceMock
@@ -304,7 +330,7 @@ class MemcacheResourceManagerTest extends TestCase
         }
 
         // After create test
-        $this->expectException('Laminas\Cache\Exception\RuntimeException');
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot get compress threshold once resource is created');
         $this->assertEquals(
             $expectedOptions['auto_compress_threshold'],
@@ -327,46 +353,68 @@ class MemcacheResourceManagerTest extends TestCase
      */
     public function validServerAndServerDefaultsProvider()
     {
-        $data = [
+        return [
             // All params, no default settings
             [
                 'testServerAllParamsNoDefaults',
                 [
-                    'host' => '10.0.0.1',  'port' => 11211, 'weight' => 2, 'status' => false,
-                    'persistent' => false, 'timeout' => 5,  'retry_interval' => 10,
+                    'host'           => '10.0.0.1',
+                    'port'           => 11211,
+                    'weight'         => 2,
+                    'status'         => false,
+                    'persistent'     => false,
+                    'timeout'        => 5,
+                    'retry_interval' => 10,
                 ],
                 [],
                 [
-                    'host' => '10.0.0.1',  'port' => 11211, 'weight' => 2, 'status' => false,
-                    'persistent' => false, 'timeout' => 5,  'retry_interval' => 10,
+                    'host'           => '10.0.0.1',
+                    'port'           => 11211,
+                    'weight'         => 2,
+                    'status'         => false,
+                    'persistent'     => false,
+                    'timeout'        => 5,
+                    'retry_interval' => 10,
                 ],
             ],
             // Default settings
             [
                 'testServerWithDefaults',
                 [
-                    'host' => '10.0.0.1',  'port' => 11211,
+                    'host' => '10.0.0.1',
+                    'port' => 11211,
                 ],
                 [],
                 [
-                    'host' => '10.0.0.1',  'port' => 11211, 'weight' => 1, 'status' => true,
-                    'persistent' => true, 'timeout' => 1,  'retry_interval' => 15,
+                    'host'           => '10.0.0.1',
+                    'port'           => 11211,
+                    'weight'         => 1,
+                    'status'         => true,
+                    'persistent'     => true,
+                    'timeout'        => 1,
+                    'retry_interval' => 15,
                 ],
             ],
             // Custom default settings
             [
                 'testServerWithCustomDefaults',
                 [
-                    'host' => '10.0.0.1',  'port' => 11211, 'status' => false,
+                    'host'   => '10.0.0.1',
+                    'port'   => 11211,
+                    'status' => false,
                 ],
                 ['persistent' => false, 'timeout' => 5,  'retry_interval' => 10, 'weight' => 3],
                 [
-                    'host' => '10.0.0.1',  'port' => 11211, 'weight' => 3, 'status' => false,
-                    'persistent' => false, 'timeout' => 5,  'retry_interval' => 10,
+                    'host'           => '10.0.0.1',
+                    'port'           => 11211,
+                    'weight'         => 3,
+                    'status'         => false,
+                    'persistent'     => false,
+                    'timeout'        => 5,
+                    'retry_interval' => 10,
                 ],
             ],
         ];
-        return $data;
     }
 
     /**

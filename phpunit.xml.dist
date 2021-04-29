@@ -8,14 +8,13 @@
             <directory>./test</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
     <php>
-        <env name="TESTS_LAMINAS_CACHE_MEMCACHE_HOST" value="127.0.0.1" />
-        <env name="TESTS_LAMINAS_CACHE_MEMCACHE_PORT" value="11211" />
+        <env name="TESTS_LAMINAS_CACHE_MEMCACHE_HOST" value="127.0.0.1"/>
+        <env name="TESTS_LAMINAS_CACHE_MEMCACHE_PORT" value="11211"/>
     </php>
 </phpunit>
